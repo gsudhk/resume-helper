@@ -3,49 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resume vs Job Description Analyzer</title>
-  <link rel="stylesheet" href="./style.css">
+  <title>Resume Analyzer</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-   
-  <h1>Resume vs Job Description Analyzer</h1>
+  <header>
+    <h1>Resume & Job Description Analyzer</h1>
+  </header>
+
   <div class="container">
-    
-    <!-- Upload Resume -->
-    <div class="box">
-      <h3>Upload Resume (PDF)</h3>
-      <input type="file" id="resumeFile" accept="application/pdf">
+    <!-- Left Side -->
+    <div class="left">
+      <div class="box">
+        <h3>Upload Resume</h3>
+        <input type="file">
+      </div>
+      <div class="box">
+        <h3>Enter Job Description</h3>
+        <textarea placeholder="Paste job description here..."></textarea>
+      </div>
     </div>
 
-    <!-- Enter JD -->
-    <div class="box">
-      <h3>Enter Job Description</h3>
-      <textarea id="jobdesc" placeholder="Paste job description here..."></textarea>
+    <!-- Right Side -->
+    <div class="right">
+      <div class="box">
+        <h3>Addition</h3>
+      </div>
+      <div class="box">
+        <h3>Deletions</h3>
+      </div>
+      <div class="box current">
+        <h3>Current Match</h3>
+      </div>
     </div>
-
-    <!-- Analyze Button -->
-    <button onclick="analyze()">Analyze</button>
-    
-    <!-- Additions -->
-    <div class="box">
-      <h3>Addition (Skills to Include)</h3>
-      <div id="additions" class="tags"></div>
-    </div>
-
-    <!-- Deletions -->
-    <div class="box">
-      <h3>Deletion (Skills to Remove)</h3>
-      <div id="deletions" class="tags"></div>
-    </div>
-
-    <!-- Matches -->
-    <div class="box match-box">
-      <h3>Current Match</h3>
-      <div id="matches" class="tags"></div>
-    </div>
-
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-  <script src="./script.js"></script>
+
 </body>
 </html>
