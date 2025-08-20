@@ -1,0 +1,103 @@
+*{
+    box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f0f4ff, #ffffff);
+  margin: 0;
+  padding: 0;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  text-align: center;
+  padding: 25px;
+  font-size: 30px;
+  font-weight: 700;
+  color: #222;
+  background: #a9c0c9e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 0 0 12px 12px;
+}
+
+.container {
+  flex: 1; /* take full available height under header */
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 25px;
+  padding: 30px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Left side */
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Right side */
+.right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 25px;
+  height: 100%;
+}
+
+.box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+}
+
+.box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.right .current {
+  grid-column: span 2;
+  grid-row: 2;
+}
+
+h3 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #444;
+  border-left: 4px solid #4a90e2;
+  padding-left: 10px;
+}
+
+input[type="file"], textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+input[type="file"]:hover, textarea:hover,
+input[type="file"]:focus, textarea:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+  outline: none;
+}
+
+textarea {
+  resize: none;
+  max-height: fit-content;
+}
