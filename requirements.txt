@@ -1,7 +1,15 @@
+# requirements.txt
+
+# Core AI & Vector DB
 qdrant-client>=1.9.0
 langchain-google-genai>=0.1.0
 groq>=0.5.0
+
+# PDF & Utility
 PyPDF2>=3.0.0
 setuptools>=68.0.0
+
+# Web Server (Backend)
 fastapi
 uvicorn
+python-multipart

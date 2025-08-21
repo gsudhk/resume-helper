@@ -1,60 +1,103 @@
-let extractedResumeText = "";  // will store extracted text from PDF
+// script.js
+const API_BASE_URL = "http://127.0.0.1:8000";
 
-// Upload PDF to backend
+// Handle file upload
 document.getElementById("resumeFile").addEventListener("change", async function (e) {
-  let file = e.target.files[0];
-  if (file && file.type === "application/pdf") {
-    let formData = new FormData();
-    formData.append("file", file);
+    const file = e.target.files[0];
+    const analyzeBtn = document.getElementById("analyzeBtn");
 
-    const res = await fetch("http://localhost:8000/upload-pdf", {
-      method: "POST",
-      body: formData
-    });
-    const data = await res.json();
-    if (data.message) {
-      alert("✅ Resume uploaded and processed successfully!");
+    if (file && file.type === "application/pdf") {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = "Processing PDF...";
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/upload-pdf`, {
+                method: "POST",
+                body: formData
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.detail || "PDF processing failed.");
+            }
+
+            const data = await res.json();
+            alert("✅ " + data.message);
+
+        } catch (error) {
+            alert("❌ Error: " + error.message);
+        } finally {
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = "Analyze";
+        }
     } else {
-      alert(data.error || "Failed to upload resume.");
+        alert("Please upload a valid PDF file.");
     }
-  } else {
-    alert("Please upload a valid PDF file.");
-  }
 });
 
-// Analyze job description with backend
+// Handle analysis
 async function analyze() {
-  let jobText = document.getElementById("jobdesc").value;
-  if (!jobText) {
-    alert("Please paste the Job Description!");
-    return;
-  }
-
-  let formData = new FormData();
-  formData.append("job_description", jobText);
-
-  const res = await fetch("http://localhost:8000/analyze", {
-    method: "POST",
-    body: formData
-  });
-  const data = await res.json();
-
-  function renderTags(list, containerId, type) {
-    let container = document.getElementById(containerId);
-    container.innerHTML = "";
-    if (!list || list.length === 0) {
-      container.innerHTML = "<p style='color:#6b7280;'>None</p>";
-    } else {
-      list.forEach(word => {
-        let span = document.createElement("span");
-        span.className = "tag " + type;
-        span.textContent = word;
-        container.appendChild(span);
-      });
+    const jobText = document.getElementById("jobDesc").value;
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    
+    if (!jobText.trim()) {
+        alert("Please paste the Job Description!");
+        return;
     }
-  }
 
-  renderTags(data.matches, "matches", "match");
-  renderTags(data.additions, "additions", "add");
-  renderTags(data.deletions, "deletions", "delete");
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "Analyzing...";
+
+    // Clear previous results
+    document.getElementById("scoreContainer").textContent = "0%";
+    document.getElementById("matchesContainer").innerHTML = "";
+    document.getElementById("missingContainer").innerHTML = "";
+
+    try {
+        const formData = new FormData();
+        formData.append("job_description", jobText);
+
+        const res = await fetch(`${API_BASE_URL}/analyze`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.detail || "Analysis failed.");
+        }
+
+        const data = await res.json();
+        
+        // Render the new results
+        document.getElementById("scoreContainer").textContent = data.score + "%";
+        renderTags(data.matches, "matchesContainer", "match");
+        renderTags(data.missing, "missingContainer", "delete");
+
+    } catch (error) {
+        alert("❌ Error: " + error.message);
+    } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Analyze";
+    }
+}
+
+function renderTags(list, containerId, type) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ""; // Clear previous tags
+    if (!list || list.length === 0 || (list.length === 1 && list[0] === "")) {
+        container.innerHTML = "<p class='no-tags'>None found.</p>";
+    } else {
+        list.forEach(word => {
+            if (word) { // Ensure the word is not an empty string
+                const span = document.createElement("span");
+                span.className = "tag " + type;
+                span.textContent = word;
+                container.appendChild(span);
+            }
+        });
+    }
 }
