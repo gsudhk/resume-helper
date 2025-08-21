@@ -1,61 +1,48 @@
 let extractedResumeText = "";  // will store extracted text from PDF
 
-// Extract text from uploaded PDF
-document.getElementById("resumeFile").addEventListener("change", function (e) {
+// Upload PDF to backend
+document.getElementById("resumeFile").addEventListener("change", async function (e) {
   let file = e.target.files[0];
   if (file && file.type === "application/pdf") {
-    let fileReader = new FileReader();
-    fileReader.onload = function () {
-      let typedarray = new Uint8Array(this.result);
+    let formData = new FormData();
+    formData.append("file", file);
 
-      pdfjsLib.getDocument(typedarray).promise.then(function (pdf) {
-        let textPromises = [];
-        for (let i = 1; i <= pdf.numPages; i++) {
-          textPromises.push(
-            pdf.getPage(i).then(function (page) {
-              return page.getTextContent().then(function (textContent) {
-                return textContent.items.map(item => item.str).join(" ");
-              });
-            })
-          );
-        }
-        return Promise.all(textPromises);
-      }).then(function (texts) {
-        extractedResumeText = texts.join(" ");
-        alert("✅ Resume uploaded and processed successfully!");
-      });
-    };
-    fileReader.readAsArrayBuffer(file);
+    const res = await fetch("http://localhost:8000/upload-pdf", {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+    if (data.message) {
+      alert("✅ Resume uploaded and processed successfully!");
+    } else {
+      alert(data.error || "Failed to upload resume.");
+    }
   } else {
     alert("Please upload a valid PDF file.");
   }
 });
 
-// Analyzer function
-function analyze() {
-  let resumeText = extractedResumeText.toLowerCase();
-  let jobText = document.getElementById("jobdesc").value.toLowerCase();
-
-  if (!resumeText) {
-    alert("Please upload a Resume PDF first!");
-    return;
-  }
+// Analyze job description with backend
+async function analyze() {
+  let jobText = document.getElementById("jobdesc").value;
   if (!jobText) {
     alert("Please paste the Job Description!");
     return;
   }
 
-  let resumeWords = new Set(resumeText.split(/[\s,.;:\n]+/).filter(w => w.length > 2));
-  let jobWords = new Set(jobText.split(/[\s,.;:\n]+/).filter(w => w.length > 2));
+  let formData = new FormData();
+  formData.append("job_description", jobText);
 
-  let matches = [...resumeWords].filter(w => jobWords.has(w));
-  let additions = [...jobWords].filter(w => !resumeWords.has(w));
-  let deletions = [...resumeWords].filter(w => !jobWords.has(w));
+  const res = await fetch("http://localhost:8000/analyze", {
+    method: "POST",
+    body: formData
+  });
+  const data = await res.json();
 
   function renderTags(list, containerId, type) {
     let container = document.getElementById(containerId);
     container.innerHTML = "";
-    if (list.length === 0) {
+    if (!list || list.length === 0) {
       container.innerHTML = "<p style='color:#6b7280;'>None</p>";
     } else {
       list.forEach(word => {
@@ -67,7 +54,7 @@ function analyze() {
     }
   }
 
-  renderTags(matches, "matches", "match");
-  renderTags(additions, "additions", "add");
-  renderTags(deletions, "deletions", "delete");
+  renderTags(data.matches, "matches", "match");
+  renderTags(data.additions, "additions", "add");
+  renderTags(data.deletions, "deletions", "delete");
 }
