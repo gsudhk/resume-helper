@@ -1,47 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resume Analyzer</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Screener</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Resume & Job Description Analyzer</h1>
-  </header>
+    <header>
+        <h1>AI Resume Screener</h1>
+    </header>
 
-  <div class="container">
-    <!-- Left Side -->
-    <div class="left">
-      <div class="box">
-        <h3>Upload Resume</h3>
-        <input type="file">
-      </div>
-      <div class="box">
-        <h3>Enter Job Description</h3>
-        <textarea placeholder="Paste job description here..."></textarea>
-      </div>
+    <div class="container">
+        <div class="left">
+            <div class="box">
+                <h3>1. Upload Resume (PDF)</h3>
+                <input type="file" id="resumeFile" accept=".pdf">
+            </div>
+            <div class="box">
+                <h3>2. Enter Job Description</h3>
+                <textarea id="jobDesc" placeholder="Paste the full job description here..."></textarea>
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="box">
+                <h3>✅ Good Matches</h3>
+                <div id="matchesContainer" class="tag-container"></div>
+            </div>
+            <div class="box">
+                <h3>⚠️ Missing Skills</h3>
+                <div id="missingContainer" class="tag-container"></div>
+            </div>
+            <div class="box current">
+                <h3>🏆 Match Score</h3>
+                <div id="scoreContainer" class="score">0%</div>
+            </div>
+        </div>
+    </div>
+    <div class="button-container">
+        <button id="analyzeBtn" onclick="analyze()">Analyze</button>
     </div>
 
-    <!-- Right Side -->
-    <div class="right">
-      <div class="box">
-        <h3>Addition</h3>
-      </div>
-      <div class="box">
-        <h3>Deletions</h3>
-      </div>
-      <div class="box current">
-        <h3>Current Match</h3>
-      </div>
-    </div>
-  </div>
-  <div class="container2">
-    <div class="button">
-        <button>Analyze</button>
-    </div>
-  </div>
-
+    <script src="script.js"></script>
 </body>
 </html>
