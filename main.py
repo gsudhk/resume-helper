@@ -18,7 +18,10 @@ try:
         model="models/embedding-001",
         google_api_key=os.getenv("GOOGLE_API_KEY")
     )
-    qdrant = QdrantClient(host="localhost", port=6333)
+    qdrant = QdrantClient(
+    url=os.getenv("QDRANT_URL"),
+    api_key=os.getenv("QDRANT_API_KEY")
+)
     groq_client = Groq(api_key=os.environ["GROQ_API_KEY"])
     collection_name = "resumes"
 except Exception as e:
@@ -129,14 +132,15 @@ async def analyze_job_description(job_description: str = Form(...)):
         
         Analyze the given job description and resume chunks. Compare them and provide the following:
 
-1. A **match score** between 0 and 100 based on how well the resume fits the job description.
-2. A list of **skills that should be added to the resume**(do not mention any skill that is present in resume) to make it highly relevant for the given job description  give  6 skills.
-3. A list of **skills that should be removed from the resume**(do not mention any skill out of resume) because they are irrelevant or not required for the role. If the skill is slightly related, DO NOT remove it. Limit to maximum 5 skills for removal,do not involve git
+Your task:
+point 1. Provide a **match score** between 0 and 100 based on how well the resume matches the job description.
+point 2.  A list of skills that are highly required for the job description provided but are not present in the given resume.
+point 3.  A list of skills that are already present in the resume but do not match with the given jd, because they are highly irrelevant and not required for the job role(DO NOT GIVE ANY SKILL OUT OF THE RESUME).
 
         Provide the output in the following format, and nothing else:
-        SCORE: [score]
-        MATCHES: [comma-separated list of skills to be added]
-        MISSING: [comma-separated list of skills to be removed]
+        SCORE: [score (point 1)]
+        MATCHES: [comma-separated list of skills to be added(point 2)]
+        MISSING: [comma-separated list of skills to be removed(point 3)]
         """
 
         response = groq_client.chat.completions.create(
